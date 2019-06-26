@@ -1,18 +1,16 @@
 defmodule Skynet do
-  @moduledoc """
-  Documentation for Skynet.
-  """
+  def spawn_terminator do
+    Skynet.Supervisor.start_child()
+  end
 
-  @doc """
-  Hello world.
+  def kill_terminator(pid) do
+    Supervisor.terminate_child(Skynet.Supervisor, pid)
+  end
 
-  ## Examples
-
-      iex> Skynet.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def list_terminators do
+    Skynet.Supervisor
+    |> DynamicSupervisor.which_children()
+    |> Enum.map(&elem(&1, 1))
+    |> Enum.map(&Kernel.inspect/1)
   end
 end
