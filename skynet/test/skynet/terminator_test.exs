@@ -1,5 +1,5 @@
 defmodule Skynet.TerminatorTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   describe "spawning" do
     test "it sets a timer to maybe spawn every 5 seconds when initialized" do
@@ -9,6 +9,7 @@ defmodule Skynet.TerminatorTest do
       time = Process.read_timer(spawn_timer)
 
       assert_in_delta(time, 5000, 5)
+      Supervisor.terminate_child(Skynet.Supervisor, pid)
     end
 
     test "it handles the maybe spawn message and resets the timer" do
@@ -24,6 +25,7 @@ defmodule Skynet.TerminatorTest do
 
       refute old_timer === spawn_timer
       assert_in_delta(time, 5000, 5)
+      Supervisor.terminate_child(Skynet.Supervisor, pid)
     end
   end
 
@@ -35,6 +37,7 @@ defmodule Skynet.TerminatorTest do
       time = Process.read_timer(die_timer)
 
       assert_in_delta(time, 10_000, 10)
+      Supervisor.terminate_child(Skynet.Supervisor, pid)
     end
   end
 end
