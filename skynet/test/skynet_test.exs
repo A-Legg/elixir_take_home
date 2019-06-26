@@ -1,5 +1,5 @@
 defmodule SkynetTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   describe "spawn_terminator/0" do
     test "it starts a terminator process under the supervision of the skynet supervisor" do
@@ -26,10 +26,7 @@ defmodule SkynetTest do
     test "it lists all terminators" do
       {:ok, pid} = Skynet.Supervisor.start_child()
 
-      list = Skynet.list_terminators()
-
-      assert is_list(list)
-      assert Kernel.inspect(pid) in list
+      assert [%{id: inspect(pid)}] === Skynet.list_terminators()
       Supervisor.terminate_child(Skynet.Supervisor, pid)
     end
   end

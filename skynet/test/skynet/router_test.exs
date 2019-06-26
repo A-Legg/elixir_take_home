@@ -1,5 +1,5 @@
 defmodule Skynet.RouterTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   use Plug.Test
 
   @opts Skynet.Router.init([])
@@ -33,6 +33,22 @@ defmodule Skynet.RouterTest do
       assert conn.state == :sent
       assert conn.status == 200
       Supervisor.terminate_child(Skynet.Supervisor, pid)
+    end
+  end
+
+  describe "/terminate" do
+    test "it kills a terminator process" do
+      {:ok, pid} = Skynet.spawn_terminator()
+      params = %{id: inspect(pid)}
+
+      conn =
+        :delete
+        |> conn("/terminate", params)
+        |> Skynet.Router.call(@opts)
+
+      refute Process.alive?(pid)
+      assert conn.state == :sent
+      assert conn.status == 200
     end
   end
 end

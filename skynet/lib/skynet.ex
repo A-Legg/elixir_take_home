@@ -11,6 +11,10 @@ defmodule Skynet do
     Skynet.Supervisor
     |> DynamicSupervisor.which_children()
     |> Enum.map(&elem(&1, 1))
-    |> Enum.map(&Kernel.inspect/1)
+    |> Enum.map(&format_pid/1)
+  end
+
+  defp format_pid(pid) do
+    %{id: inspect(pid)}
   end
 end
